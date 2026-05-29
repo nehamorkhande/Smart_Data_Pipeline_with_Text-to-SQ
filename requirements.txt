@@ -1,0 +1,12 @@
+streamlit
+pandas
+sqlalchemy
+pymysql
+openpyxl
+python-dotenv
+plotly
+google-generativeai
+thefuzz
+python-levenshtein
+reportlab
+schedule
