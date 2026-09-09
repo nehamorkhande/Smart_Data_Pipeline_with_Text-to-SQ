@@ -157,9 +157,9 @@
 #     except Exception as e:
 #         err = str(e)
 #         if "429" in err or "rate_limit" in err.lower():
-#             return "⚠️ Rate limit hit. Please wait a moment and try again."
+#             return " Rate limit hit. Please wait a moment and try again."
 #         if "iteration limit" in err.lower() or "time limit" in err.lower():
-#             return "⚠️ Query timed out. Please try a simpler question like 'show top 5 products by revenue'."
+#             return " Query timed out. Please try a simpler question like 'show top 5 products by revenue'."
 #         return f"I encountered an error: {err}\n\nPlease try rephrasing your question."
 
 
