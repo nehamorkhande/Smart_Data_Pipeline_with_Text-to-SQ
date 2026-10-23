@@ -10,3 +10,7 @@ thefuzz
 python-levenshtein
 reportlab
 schedule
+langchain
+langchain-core
+langchain-community
+langchain-groq
