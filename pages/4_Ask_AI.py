@@ -107,6 +107,7 @@ with st.sidebar:
     st.page_link("pages/3_Dashboard.py",      label="📊  Dashboard")
     st.page_link("pages/4_Ask_AI.py",         label="🤖  Ask AI")
     st.page_link("pages/5_Upload_History.py", label="📋  Upload History")
+    st.page_link("pages/6_Store_Policy.py",   label="📄  Store Policy")
 
     st.markdown("""<div style="height:1px;background:#1a1a1a;margin:14px 0"></div>
     <div style="font-size:10px;color:#374151;text-transform:uppercase;
@@ -133,13 +134,13 @@ with st.sidebar:
 # ── Header ───────────────────────────────────────────────────
 st.markdown("""
 <p class="page-title">🤖 AI Business Advisor</p>
-<p class="page-sub">Powered by LangChain + Groq/LLaMA</p>
+<p class="page-sub">Powered by LangChain + Groq</p>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="ai-stack-badge">
     🔗 LangChain SQL Agent &nbsp;·&nbsp;
-    ⚡ LLaMA 3.3 70B via Groq
+    ⚡ LLM via Groq
 </div>
 """, unsafe_allow_html=True)
 
@@ -158,6 +159,10 @@ EXAMPLES = [
     "Compare top vs bottom products",
     "Which payment mode is popular?",
     "Summarize this month",
+    "What is the return policy?",
+    "How long does a refund take?",
+    "Is there a warranty on electronics?",
+    "Can I cancel a pending order?",
 ]
 
 st.markdown("""<div style="font-size:11px;font-weight:500;color:#9ca3af;
@@ -182,7 +187,7 @@ if not st.session_state["chat_history"]:
         <div class="empty-title">AI Business Advisor</div>
         <div class="empty-sub">
             LangChain SQL Agent queries your database ·<br>
-            LLaMA 3.3 70B answers<br><br>
+            the LLM answers<br><br>
             Ask about revenue, products, customers, trends,<br>
             or anything about your business.
         </div>

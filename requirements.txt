@@ -14,3 +14,10 @@ langchain
 langchain-core
 langchain-community
 langchain-groq
+langchain_google_genai
+pypdf
+fastembed
+faiss-cpu
+chromadb
+pinecone
+ 

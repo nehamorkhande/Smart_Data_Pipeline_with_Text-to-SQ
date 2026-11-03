@@ -5,14 +5,30 @@ from langchain_groq import ChatGroq
 from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_core.messages import HumanMessage, AIMessage
+from genai.policy_rag import is_policy_question, answer_from_policy
 
 load_dotenv()
+
+
+# ── Some models (Gemini, Gemma) return a list of parts instead of a string ──
+def to_text(content) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for part in content:
+            if isinstance(part, str):
+                parts.append(part)
+            elif isinstance(part, dict) and part.get("type") == "text":
+                parts.append(part.get("text", ""))
+        return "".join(parts)
+    return str(content)
 
 
 # ── LLM ──────────────────────────────────────────────────────
 def get_llm():
     return ChatGroq(
-        model=os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"),
+        model=os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
         api_key=os.getenv("GROQ_API_KEY"),
         temperature=0,
     )
@@ -122,6 +138,10 @@ def langchain_chat(
         use_sql_agent: bool = True,
 ) -> str:
     try:
+        # questions about the store policy (return, refund, warranty ...) -> policy pdf
+        if is_policy_question(question):
+            return answer_from_policy(admin_id, business_name, question)
+
         if use_sql_agent and question_needs_sql(question):
             agent = get_sql_agent(admin_id, business_name)
             full_question = f"""
@@ -144,7 +164,7 @@ Rules:
                 "chat_history": lc_history,
             })
 
-            output = result.get("output", "I could not find an answer.")
+            output = to_text(result.get("output", "I could not find an answer."))
             for pat in [
                 f"(admin_id = {admin_id})", f"(admin_id={admin_id})",
             ]:
@@ -171,12 +191,12 @@ Give a helpful, specific, and actionable answer.
 Use data and numbers when available.
 Be conversational but professional.
 Never mention admin_id in your response."""
-        return llm.invoke(prompt).content
+        return to_text(llm.invoke(prompt).content)
 
     except Exception as e:
         err = str(e)
         if "429" in err or "rate_limit" in err.lower():
-            return "⚠️ Rate limit hit. Please wait a moment and try again. Details: " + err[:400]
+            return "⚠️ Rate limit hit. Please wait a moment and try again. Details: " + err[:1500]
         if "iteration limit" in err.lower() or "time limit" in err.lower():
             return "⚠️ Query timed out. Please try a simpler question like 'show top 5 products by revenue'."
         return f"I encountered an error: {err}\n\nPlease try rephrasing your question."
